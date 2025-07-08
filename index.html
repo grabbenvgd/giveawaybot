@@ -1,0 +1,91 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kick Giveaway Panel (Egen backend)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1e1331;
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #00ffcc;
+      font-size: 2.2em;
+    }
+    input, button {
+      font-size: 1.1em;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 6px;
+      border: none;
+    }
+    input {
+      width: 220px;
+    }
+    button {
+      background-color: #00d084;
+      color: white;
+      cursor: pointer;
+    }
+    .participants, .winner {
+      margin-top: 30px;
+    }
+    .name {
+      margin: 4px 0;
+      font-size: 1.1em;
+    }
+    #winner {
+      margin-top: 20px;
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #00ffcc;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎁 Kick Chat Giveaway</h1>
+  <div>
+    <input type="text" id="channel" placeholder="Kick kanal (ex. tjomannenvgd)">
+    <input type="text" id="keyword" placeholder="Keyword (ex. !join)">
+    <button onclick="startGiveaway()">Starta</button>
+    <button onclick="getParticipants()">Hämta deltagare</button>
+    <button onclick="pickWinner()">Välj vinnare</button>
+  </div>
+
+  <div class="participants">
+    <h2>Deltagare</h2>
+    <div id="participants"></div>
+  </div>
+  <div class="winner">
+    <div id="winner"></div>
+  </div>
+
+  <script>
+    async function startGiveaway() {
+      const ch = document.getElementById("channel").value.trim();
+      const kw = document.getElementById("keyword").value.trim();
+      if (!ch || !kw) return alert("Fyll i både kanal och keyword.");
+      const res = await fetch(`http://localhost:3001/start?channel=${encodeURIComponent(ch)}&keyword=${encodeURIComponent(kw)}`);
+      const text = await res.text();
+      alert(text);
+    }
+
+    async function getParticipants() {
+      const res = await fetch("http://localhost:3001/participants");
+      const users = await res.json();
+      document.getElementById("participants").innerHTML = users.map(u => `<div class="name">${u}</div>`).join("");
+    }
+
+    async function pickWinner() {
+      const res = await fetch("http://localhost:3001/winner");
+      const data = await res.json();
+      document.getElementById("winner").innerText = data.winner ? `🎉 Vinnare: ${data.winner}` : "Inga deltagare än!";
+    }
+  </script>
+</body>
+</html>
