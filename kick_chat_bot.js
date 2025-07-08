@@ -1,12 +1,13 @@
 
-// kick-chat-bot.js
-// Enkel Kick giveaway-bot via WebSocket (utan auth)
-// OBS: för full funktion behövs inloggning/autentisering
+import express from 'express';
+import fetch from 'node-fetch';
+import WebSocket from 'ws';
+import cors from 'cors';
 
-const WebSocket = require('ws');
-const express = require('express');
 const app = express();
 const port = 3001;
+
+app.use(cors());
 
 let participants = new Set();
 let currentKeyword = '!join';
@@ -88,7 +89,6 @@ app.get('/winner', (req, res) => {
   res.json({ winner });
 });
 
-// Starta server
 app.listen(port, () => {
   console.log(`🚀 Kick bot server körs på http://localhost:${port}`);
 });
